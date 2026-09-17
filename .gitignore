@@ -61,11 +61,8 @@ desktop.ini
 *.index
 *.faiss
 
-# Documents (real banking docs should never be committed)
-docs/*.pdf
-docs/*.docx
-docs/*.txt
-!docs/PHASE*.md
+# Documents / internal notes (never committed)
+docs/
 
 # Node / Angular (frontend — Phase 3)
 frontend/node_modules/
