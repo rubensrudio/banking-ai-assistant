@@ -1,3 +1,5 @@
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
 from app.domain.models import DocumentChunk
 from app.rag.cleaner import clean_text, is_meaningful
 
@@ -9,7 +11,9 @@ def chunk_pages(
     chunk_overlap: int = 200,
 ) -> list[DocumentChunk]:
     """
-    Convert a list of page dicts into DocumentChunks using a sliding window.
+    Convert a list of page dicts into DocumentChunks using LangChain's
+    RecursiveCharacterTextSplitter, which splits on paragraph/sentence/word
+    boundaries where possible instead of a fixed character offset.
 
     Args:
         pages: List of {"text": str, "page": int | None, "source": str}
@@ -20,6 +24,12 @@ def chunk_pages(
     Returns:
         Flat list of DocumentChunk objects, filtered for meaningful content
     """
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=chunk_size,
+        chunk_overlap=chunk_overlap,
+        separators=["\n\n", "\n", ". ", " ", ""],
+    )
+
     chunks: list[DocumentChunk] = []
     global_index = 0
 
@@ -33,11 +43,8 @@ def chunk_pages(
         if not text:
             continue
 
-        # Sliding window chunking
-        start = 0
-        while start < len(text):
-            end = start + chunk_size
-            chunk_text = text[start:end].strip()
+        for chunk_text in splitter.split_text(text):
+            chunk_text = chunk_text.strip()
 
             if is_meaningful(chunk_text):
                 chunks.append(
@@ -51,9 +58,5 @@ def chunk_pages(
                     )
                 )
                 global_index += 1
-
-            # Move forward by (chunk_size - overlap), minimum 1 to avoid infinite loop
-            step = max(chunk_size - chunk_overlap, 1)
-            start += step
 
     return chunks

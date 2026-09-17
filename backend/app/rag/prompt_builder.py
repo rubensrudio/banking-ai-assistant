@@ -1,3 +1,5 @@
+from langchain_core.prompts import ChatPromptTemplate
+
 from app.domain.models import RetrievedChunk
 
 SYSTEM_PROMPT = """You are a precise banking assistant for a financial institution.
@@ -13,10 +15,28 @@ STRICT RULES:
 6. Do not provide financial advice beyond what is stated in the documents.
 """
 
+_USER_TEMPLATE = (
+    "CONTEXT:\n{context}\n\n"
+    "QUESTION: {question}\n\n"
+    "Answer based solely on the context above. "
+    "If you use information from the context, mention the source document."
+)
+
+_RAG_PROMPT = ChatPromptTemplate.from_messages(
+    [
+        ("system", SYSTEM_PROMPT),
+        ("human", _USER_TEMPLATE),
+    ]
+)
+
 
 def build_rag_prompt(query: str, chunks: list[RetrievedChunk]) -> list[dict]:
     """
     Build the message list for the LLM using retrieved context.
+
+    Uses a LangChain ChatPromptTemplate to assemble the system/human messages,
+    then converts them into the plain role/content dicts the rest of the
+    pipeline (LLM providers, tests) already expects.
 
     Returns a 2-element list: [system_message, user_message]
     The user message embeds the retrieved context and the query.
@@ -30,16 +50,11 @@ def build_rag_prompt(query: str, chunks: list[RetrievedChunk]) -> list[dict]:
             parts.append(f"[Source {i}: {chunk.source_file}{page_info}]\n{chunk.text}")
         context = "\n\n---\n\n".join(parts)
 
-    user_message = (
-        f"CONTEXT:\n{context}\n\n"
-        f"QUESTION: {query}\n\n"
-        "Answer based solely on the context above. "
-        "If you use information from the context, mention the source document."
-    )
+    prompt_value = _RAG_PROMPT.invoke({"context": context, "question": query})
 
     return [
-        {"role": "system", "content": SYSTEM_PROMPT},
-        {"role": "user", "content": user_message},
+        {"role": "system" if message.type == "system" else "user", "content": message.content}
+        for message in prompt_value.to_messages()
     ]
 
 

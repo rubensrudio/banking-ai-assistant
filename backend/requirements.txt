@@ -18,10 +18,11 @@ torch==2.5.1
 # Vector DB
 pinecone==5.4.2
 
-# LangChain (used from Phase 2 onwards)
+# LangChain (chunking and prompt orchestration)
 langchain==0.3.13
 langchain-community==0.3.13
 langchain-core==0.3.28
+langchain-text-splitters==0.3.4
 
 # LLM provider (OpenAI-compatible — works with LM Studio)
 openai==1.58.1

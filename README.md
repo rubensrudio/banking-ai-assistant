@@ -7,7 +7,7 @@ A Retrieval-Augmented Generation (RAG) backend for a banking domain AI assistant
 The project is structured as a FastAPI backend organized around a classic RAG pipeline:
 
 - **Loaders** — extract raw text from PDF, DOCX, and TXT documents.
-- **Cleaner & Chunker** — normalize and split documents into overlapping chunks suitable for embedding.
+- **Cleaner & Chunker** — normalize text and split it into overlapping chunks using LangChain's `RecursiveCharacterTextSplitter`, suitable for embedding.
 - **Embedding Provider** — generates vector embeddings locally using `sentence-transformers` (no external API key required).
 - **Vector Store** — persists and queries embeddings using Pinecone.
 - **LLM Provider** — generates answers using an OpenAI-compatible chat completion API (configured by default for a local LM Studio server).
@@ -25,7 +25,7 @@ This is currently **Phase 1** of the project (backend/RAG core). Frontend (Angul
 | Document parsing | pypdf, python-docx |
 | Embeddings | sentence-transformers, torch |
 | Vector database | Pinecone |
-| Orchestration | LangChain (langchain, langchain-community, langchain-core) |
+| Orchestration | LangChain — `RecursiveCharacterTextSplitter` for chunking, `ChatPromptTemplate` for RAG prompt assembly (langchain, langchain-community, langchain-core, langchain-text-splitters) |
 | LLM client | openai (OpenAI-compatible client, used with LM Studio) |
 | HTTP client | httpx |
 | Logging | python-json-logger |
