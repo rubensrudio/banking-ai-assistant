@@ -14,7 +14,7 @@ The project is structured as a FastAPI backend organized around a classic RAG pi
 - **RAG Service** — orchestrates retrieval + prompt building + generation to answer user questions.
 - **Ingestion Service** — orchestrates the document ingestion pipeline (load → clean → chunk → embed → store).
 
-This is currently **Phase 1** of the project (backend/RAG core). Frontend (Angular) is planned for Phase 3.
+This is currently **Phase 1** of the project (backend/RAG core, with LangChain-based chunking and prompt orchestration). Frontend (Angular) is planned for Phase 2.
 
 ## Tech Stack & Libraries
 
@@ -185,5 +185,5 @@ Key environment variables (see `backend/.env.example` for the full list):
 
 ## Roadmap
 
-- **Phase 1** — RAG backend core (current)
-- **Phase 3** — Angular frontend
+- **Phase 1** — RAG backend core, including LangChain-based chunking and prompt orchestration (current)
+- **Phase 2** — Angular frontend
