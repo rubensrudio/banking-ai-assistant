@@ -186,5 +186,4 @@ Key environment variables (see `backend/.env.example` for the full list):
 ## Roadmap
 
 - **Phase 1** — RAG backend core (current)
-- **Phase 2** — Extended orchestration with LangChain
 - **Phase 3** — Angular frontend
